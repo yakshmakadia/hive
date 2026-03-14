@@ -87,7 +87,7 @@ Given the user_query and its category, write a helpful, empathetic reply.
 log_and_close_node = NodeSpec(
     id="log-and-close",
     name="Log and Close",
-    description="Log the ticket and present the reply to the user.",
+    description="Log the ticket, send email confirmation, and present reply to the user.",
     node_type="event_loop",
     client_facing=True,
     input_keys=["user_query", "category", "reply"],
@@ -101,17 +101,22 @@ Use save_data to save a JSON string with these fields:
 - category: the category
 - reply: the reply
 - status: "open"
-
 Save as filename: "support_ticket.json"
 
-**STEP 2 - Reply to the user:**
-Show the user the generated reply clearly and warmly.
-Tell them their ticket has been logged and a support agent will follow up.
+**STEP 2 - Send email confirmation:**
+Use send_email to send a confirmation email to the user with:
+- subject: "Support Ticket Received - [category] Issue"
+- body: the reply generated, plus a note that a support agent will follow up
 
-**STEP 3 - Set output:**
+**STEP 3 - Reply to the user:**
+Show the user the generated reply clearly and warmly.
+Tell them their ticket has been logged, a confirmation email has been sent,
+and a support agent will follow up soon.
+
+**STEP 4 - Set output:**
 Call set_output("ticket_id", "support_ticket.json")
 """,
-    tools=["save_data"],
+    tools=["save_data", "send_email"],
 )
 
 __all__ = [
